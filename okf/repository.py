@@ -2,12 +2,19 @@ from .parser import parse_document
 from .utils  import find_markdown_files
 from .validator import RepositoryValidator
 from .graph import KnowledgeGraph
+from .query_engine import QueryEngine
+from .context_builder import ContextBuilder
+from .graph_expander import GraphExpander
+
 
 class OKFRepository:
     def __init__(self, root):
         self.root = root
         self.documents = {}
         self.graph = KnowledgeGraph()
+        self.query_engine = QueryEngine(self)
+        self.context_builder = ContextBuilder(self)
+        self.graph_expander = GraphExpander(self)
 
     def load(self):
 
@@ -35,9 +42,20 @@ class OKFRepository:
         print(repo.graph.graph.nodes())
         print(repo.graph.graph.edges())
 
-
-    
     def validate(self):
         validator = RepositoryValidator(self)
         self.validation_report = validator.validate()
         return self.validation_report
+
+    def search(self, query):
+        return self.query_engine.search(query)
+ 
+    def expand(self, results):
+
+        return self.graph_expander.expand(results)
+
+    def build_context(self, results):
+
+        return self.context_builder.build(results)
+
+
