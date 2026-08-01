@@ -54,8 +54,18 @@ class OKFRepository:
 
         return self.graph_expander.expand(results)
 
-    def build_context(self, results):
+    def build_context(self, documents):
 
-        return self.context_builder.build(results)
+        return self.context_builder.build(documents)
+
+    def retrieve_context(self, query):
+
+        results = self.search(query)
+
+        expanded = self.expand(results)
+
+        context = self.build_context(expanded)
+
+        return context
 
 
