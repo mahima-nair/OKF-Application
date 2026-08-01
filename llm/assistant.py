@@ -1,4 +1,4 @@
-from .ollama_client import OllamaClient
+from .client import LLMClient
 from .prompts import build_prompt
 
 
@@ -7,7 +7,7 @@ class Assistant:
     def __init__(self, repository):
 
         self.repository = repository
-        self.llm = OllamaClient()
+        self.llm = LLMClient()
 
     def ask(self, question):
 
