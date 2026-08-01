@@ -3,40 +3,59 @@ import re
 import frontmatter
 
 from .models import OKFDocument
-
+from .exceptions import DocumentParseError
 
 WIKI_LINK = re.compile(r"\[\[(.*?)\]\]")
 
 
 def parse_document(path):
+    """
+    Parse a single OKF markdown document.
+    """
 
-    post = frontmatter.load(path) # frontmatter is used to read the YAML data which contains the metadata of the markdown file
+    try:
 
-    metadata = post.metadata
+        # Read markdown + YAML frontmatter
+        post = frontmatter.load(path)
 
-    content = post.content
+        metadata = post.metadata
 
-    links = WIKI_LINK.findall(content)
+        content = post.content
 
-    return OKFDocument(
+        # Find all [[Wiki Links]]
+        links = WIKI_LINK.findall(content)
 
-        title=metadata["title"],
+        return OKFDocument(
 
-        doc_type=metadata["type"],
+            title=metadata["title"],
 
-        version=metadata.get("version", ""),
+            doc_type=metadata["type"],
 
-        author=metadata.get("author", ""),
+            version=metadata.get("version", ""),
 
-        last_updated=metadata.get("last_updated", ""),
+            author=metadata.get("author", ""),
 
-        tags=metadata.get("tags", []),
+            last_updated=metadata.get("last_updated", ""),
 
-        summary=metadata.get("summary", ""),
+            tags=metadata.get("tags", []),
 
-        content=content,
+            summary=metadata.get("summary", ""),
 
-        path=str(path),
+            content=content,
 
-        links=links,
-    )
+            path=str(path),
+
+            links=links,
+        )
+
+    except KeyError as e:
+
+        raise DocumentParseError(
+            f"{path}: Missing required metadata field {e}"
+        )
+
+    except Exception as e:
+
+        raise DocumentParseError(
+            f"{path}: {e}"
+        )

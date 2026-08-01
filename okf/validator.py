@@ -81,6 +81,9 @@ class RepositoryValidator:
                         )
                     )
 
+   # def check_duplicate_doc_titles(self):
+        #Find duplicates in an array logic. Implemennt it later
+
     def check_orphan_docs(self):
         referenced = set()
         for document in repository.documents.values():
